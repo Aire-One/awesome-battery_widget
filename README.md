@@ -14,6 +14,10 @@ When creating an instance of this widget, you can specify the `widget_template` 
 
 You can generate the API documentation with [ldoc][ldoc].
 
+```sh
+ldoc -c config.ld init.lua
+```
+
 Here is an example of implementation using a [`wibox.widget.textbox`][awesome-api-wibox.widget.textbox] widget to display the battery percentage:
 
 ```lua

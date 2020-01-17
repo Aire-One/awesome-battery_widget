@@ -1,3 +1,10 @@
+---------------------------------------------------------------------------
+-- A battery widget based on the UPower deamon.
+--
+-- @author Aire-One
+-- @copyright 2020 Aire-One
+---------------------------------------------------------------------------
+
 local upower = require('lgi').require('UPowerGlib')
 
 local gtable = require 'gears.table'
@@ -13,6 +20,7 @@ local mt = {}
 
 --- Helper to get the path of all connected power devices.
 -- @treturn table The list of all power devices path.
+-- @staticfct battery_widget.list_devices
 function battery_widget.list_devices()
     local ret = {}
     local devices = upower.Client():get_devices()
@@ -27,6 +35,7 @@ end
 --- Helper function to get a device instance from its path.
 -- @tparam string path The path of the device to get.
 -- @treturn UPowerGlib.Device|nil The device if it was found, `nil` otherwise.
+-- @staticfct battery_widget.get_device
 function battery_widget.get_device(path)
     local devices = upower.Client():get_devices()
 
@@ -41,6 +50,7 @@ end
 
 --- Helper function to easily get the default BAT0 device path without.
 -- @treturn string The BAT0 device path.
+-- @staticfct battery_widget.get_BAT0_device_path
 function battery_widget.get_BAT0_device_path()
     local bat0_path = '/org/freedesktop/UPower/devices/battery_BAT0'
     return bat0_path
@@ -53,6 +63,7 @@ end
 -- number of minutes).
 -- @tparam number seconds The umber of seconds to translate.
 -- @treturn string The human readable generated clock string.
+-- @staticfct battery_widget.to_clock
 function battery_widget.to_clock(seconds)
     if seconds <= 0 then
         return '00:00';
@@ -72,6 +83,12 @@ local function default_template ()
 end
 
 
+--- Emited when the UPower device notify an update.
+-- @signal upower::update
+-- @tparam battery_widget widget The widget.
+-- @tparam UPowerGlib.Device device The Upower device.
+
+
 --- battery_widget constructor.
 --
 -- This function creates a new `battery_widget` instance. This widget watches
@@ -79,13 +96,14 @@ end
 -- @tparam table args The arguments table.
 -- @tparam[opt=1] screen|number args.screen the widget's screen.
 -- @tparam[opt] widget args.widget_template The widget template to use to
---    create the widget instance.
+--   create the widget instance.
 -- @tparam[opt] function args.create_callback User defined callback for the
---    widget initialization.
+--   widget initialization.
 -- @tparam[opt] string args.device_path Path of the device to monitor.
 -- @tparam[opt=false] boolean args.use_display_device Should the widget monitor
 --   the _display device_?
 -- @treturn battery_widget The battery_widget instance build.
+-- @constructorfct battery_widget.new
 function battery_widget.new (args)
     args = gtable.crush({
         widget_template = default_template(),
