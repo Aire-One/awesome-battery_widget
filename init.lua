@@ -10,6 +10,42 @@ local screen = screen -- luacheck: ignore screen
 local battery_widget = {}
 local mt = {}
 
+
+--- Helper to get the path of all connected power devices.
+-- @treturn table The list of all power devices path.
+function battery_widget.list_devices()
+    local ret = {}
+    local devices = upower.Client():get_devices()
+
+    for _,d in ipairs(devices) do
+        table.insert(ret, d:get_object_path())
+    end
+
+    return ret
+end
+
+--- Helper function to get a device instance from its path.
+-- @tparam string path The path of the device to get.
+-- @treturn UPowerGlib.Device|nil The device if it was found, `nil` otherwise.
+function battery_widget.get_device(path)
+    local devices = upower.Client():get_devices()
+
+    for _,d in ipairs(devices) do
+        if d:get_object_path() == path then
+            return d
+        end
+    end
+
+    return nil
+end
+
+--- Helper function to easily get the default BAT0 device path without.
+-- @treturn string The BAT0 device path.
+function battery_widget.get_BAT0_device_path()
+    local bat0_path = '/org/freedesktop/UPower/devices/battery_BAT0'
+    return bat0_path
+end
+
 --- Helper function to convert seconds into a human readable clock string.
 --
 -- This translates the given seconds parameter into a human readable string
@@ -46,24 +82,32 @@ end
 --    create the widget instance.
 -- @tparam[opt] function args.create_callback User defined callback for the
 --    widget initialization.
+-- @tparam[opt] string args.device_path Path of the device to monitor.
+-- @tparam[opt=false] boolean args.use_display_device Should the widget monitor
+--   the _display device_?
 -- @treturn battery_widget The battery_widget instance build.
 function battery_widget.new (args)
     args = gtable.crush({
         widget_template = default_template(),
-        create_callback = nil
+        create_callback = nil,
+        device_path = '',
+        use_display_device = false
     }, args or {})
     args.screen = screen[args.screen or 1]
 
     local widget = wbase.make_widget_from_value(args.widget_template)
-    local display_device = upower.Client():get_display_device()
+
+    local device = args.use_display_device
+        and upower.Client():get_display_device()
+        or battery_widget.get_device(args.device_path)
 
     if type(args.create_callback) == 'function' then
-        args.create_callback(widget, display_device)
+        args.create_callback(widget, device)
     end
 
     -- Attach signals:
-    display_device.on_notify = function (device)
-        widget:emit_signal('upower::update', device)
+    device.on_notify = function (d)
+        widget:emit_signal('upower::update', d)
     end
 
     return widget
