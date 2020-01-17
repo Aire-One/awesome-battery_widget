@@ -1,10 +1,11 @@
 local upower = require('lgi').require('UPowerGlib')
-local textbox = require 'wibox.widget.textbox'
 
-local string = { format = string.format }
-local math = { floor = math.floor }
+local gtable = require 'gears.table'
+local wbase = require 'wibox.widget.base'
 
-local setmetatable = setmetatable -- luacheck ignore: setmetatable
+local setmetatable = setmetatable -- luacheck: ignore setmetatable
+local screen = screen -- luacheck: ignore screen
+
 
 local battery_widget = {}
 local mt = {}
@@ -26,40 +27,44 @@ function battery_widget.to_clock(seconds)
     end
 end
 
---- Update the battery widget with the given device.
---
--- This method can be called by the user but it was designed to be used
--- automatically by UPower thanks to the `UPowerGlib.Device` notify signal.
--- @tparam battery_widget self The battery_widget instance to update.
--- @tparam UPowerGlib.Device device The device to use for the update.
-function battery_widget.update (self, device)
-    local text
 
-    if device.state == upower.DeviceState.CHARGING  then
-        text = 'Full in ' .. battery_widget.to_clock(device.time_to_full)
-    elseif device.state == upower.DeviceState.DISCHARGING then
-        text = string.format('%3d', device.percentage) .. '%'
-    else
-        text = 'N/A'
-    end
-
-    self:set_markup(text)
+--- Gives the default widget to use if user didn't specify one.
+-- The default widget used is an `empty_widget` instance.
+-- @treturn widget The default widget to use.
+local function default_template ()
+    return wbase.empty_widget()
 end
+
 
 --- battery_widget constructor.
 --
 -- This function creates a new `battery_widget` instance. This widget watches
 -- the `display_device` status and report.
+-- @tparam table args The arguments table.
+-- @tparam[opt=1] screen|number args.screen the widget's screen.
+-- @tparam[opt] widget args.widget_template The widget template to use to
+--    create the widget instance.
+-- @tparam[opt] function args.create_callback User defined callback for the
+--    widget initialization.
 -- @treturn battery_widget The battery_widget instance build.
-function battery_widget.new ()
-    local widget = textbox()
+function battery_widget.new (args)
+    args = gtable.crush({
+        widget_template = default_template(),
+        create_callback = nil
+    }, args or {})
+    args.screen = screen[args.screen or 1]
 
-    widget.update = battery_widget.update
-
+    local widget = wbase.make_widget_from_value(args.widget_template)
     local display_device = upower.Client():get_display_device()
-    display_device.on_notify = function (device) widget:update(device) end
 
-    widget:update(display_device)
+    if type(args.create_callback) == 'function' then
+        args.create_callback(widget, display_device)
+    end
+
+    -- Attach signals:
+    display_device.on_notify = function (device)
+        widget:emit_signal('upower::update', device)
+    end
 
     return widget
 end
