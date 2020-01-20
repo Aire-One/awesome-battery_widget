@@ -84,6 +84,10 @@ local function default_template ()
 end
 
 
+--- The device monitored by the widget.
+-- @property device
+-- @tparam UPowerGlib.Device device
+
 --- Emited when the UPower device notify an update.
 -- @signal upower::update
 -- @tparam battery_widget widget The widget.
@@ -118,22 +122,22 @@ function battery_widget.new (args)
 
     local widget = wbase.make_widget_from_value(args.widget_template)
 
-    local device = args.use_display_device
+    widget.device = args.use_display_device
         and upower.Client():get_display_device()
         or battery_widget.get_device(args.device_path)
 
     if type(args.create_callback) == 'function' then
-        args.create_callback(widget, device)
+        args.create_callback(widget, widget.device)
     end
 
     -- Attach signals:
-    device.on_notify = function (d)
+    widget.device.on_notify = function (d)
         widget:emit_signal('upower::update', d)
     end
 
     -- Call an update cycle if the user asked to instan update the widget.
     if args.instant_update then
-        gtimer.delayed_call(widget.emit_signal, widget, 'upower::update', device)
+        gtimer.delayed_call(widget.emit_signal, widget, 'upower::update', widget.device)
     end
 
     return widget
