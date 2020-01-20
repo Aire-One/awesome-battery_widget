@@ -8,6 +8,7 @@
 local upower = require('lgi').require('UPowerGlib')
 
 local gtable = require 'gears.table'
+local gtimer = require 'gears.timer'
 local wbase = require 'wibox.widget.base'
 
 local setmetatable = setmetatable -- luacheck: ignore setmetatable
@@ -102,6 +103,8 @@ end
 -- @tparam[opt] string args.device_path Path of the device to monitor.
 -- @tparam[opt=false] boolean args.use_display_device Should the widget monitor
 --   the _display device_?
+-- @tparam[opt] boolean args.instant_update Call an update cycle right after the
+--   widget creation.
 -- @treturn battery_widget The battery_widget instance build.
 -- @constructorfct battery_widget.new
 function battery_widget.new (args)
@@ -126,6 +129,11 @@ function battery_widget.new (args)
     -- Attach signals:
     device.on_notify = function (d)
         widget:emit_signal('upower::update', d)
+    end
+
+    -- Call an update cycle if the user asked to instan update the widget.
+    if args.instant_update then
+        gtimer.delayed_call(widget.emit_signal, widget, 'upower::update', device)
     end
 
     return widget
