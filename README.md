@@ -54,6 +54,17 @@ local my_battery_widget = battery_widget{
 
 You can check the API documentation to read more about statics function to help you to identify your devices.
 
+### Battery widget not appearing
+
+When creating a new instance of `battery_widget`, the widget will not be shown. The widget waits an update from UPower to call the "upower::update" signal and use your attached callback to update (and draw) the widget.
+
+You can however use one of the following method to force the widget to be drawn at its creation:
+
+* Use the parameter `instant_update` to explicitly ask the battery_widget to call the "upower::update" signal at the next Awesome WM cycle.
+* Use the parameter `create_callback` to use your own code to initialize the widget. (This callback await the same arguments than the "upower::update" signal)
+
+You can read more about these parameters in the API documentation.
+
 ## Dependencies
 
 * [Awesome WM][AwesomeWM]
