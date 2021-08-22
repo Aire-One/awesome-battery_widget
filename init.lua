@@ -99,8 +99,6 @@ end
 -- @tparam table args The arguments table.
 -- @tparam[opt] widget args.widget_template The widget template to use to
 --   create the widget instance.
--- @tparam[opt] function args.create_callback User defined callback for the
---   widget initialization.
 -- @tparam[opt] string args.device_path Path of the device to monitor.
 -- @tparam[opt=false] boolean args.use_display_device Should the widget monitor
 --   the _display device_?
@@ -111,7 +109,6 @@ end
 function battery_widget.new (args)
     args = gtable.crush({
         widget_template = default_template(),
-        create_callback = nil,
         device_path = '',
         use_display_device = false
     }, args or {})
@@ -121,10 +118,6 @@ function battery_widget.new (args)
     widget.device = args.use_display_device
         and upower.Client():get_display_device()
         or battery_widget.get_device(args.device_path)
-
-    if type(args.create_callback) == 'function' then
-        args.create_callback(widget, widget.device)
-    end
 
     -- Attach signals:
     widget.device.on_notify = function (d)
