@@ -12,8 +12,6 @@ local gtimer = require 'gears.timer'
 local wbase = require 'wibox.widget.base'
 
 local setmetatable = setmetatable -- luacheck: ignore setmetatable
-local screen = screen -- luacheck: ignore screen
-
 
 local battery_widget = {}
 local mt = {}
@@ -99,7 +97,6 @@ end
 -- This function creates a new `battery_widget` instance. This widget watches
 -- the `display_device` status and report.
 -- @tparam table args The arguments table.
--- @tparam[opt=1] screen|number args.screen the widget's screen.
 -- @tparam[opt] widget args.widget_template The widget template to use to
 --   create the widget instance.
 -- @tparam[opt] function args.create_callback User defined callback for the
@@ -118,7 +115,6 @@ function battery_widget.new (args)
         device_path = '',
         use_display_device = false
     }, args or {})
-    args.screen = screen[args.screen or 1]
 
     local widget = wbase.make_widget_from_value(args.widget_template)
 
