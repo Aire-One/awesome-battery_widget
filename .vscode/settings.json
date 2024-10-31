@@ -1,0 +1,16 @@
+{
+  "Lua.runtime.path": [
+    "/usr/share/awesome/lib/?.lua",
+    "/usr/share/awesome/lib/?/init.lua"
+  ],
+  "[lua]": {
+    "editor.defaultFormatter": "JohnnyMorganz.stylua"
+  },
+  "stylua.targetReleaseVersion": "latest",
+  "files.associations": {
+    ".busted": "lua",
+    ".luacheckrc": "lua",
+    "*.rockspec": "lua",
+    "config.ld": "lua"
+  }
+}

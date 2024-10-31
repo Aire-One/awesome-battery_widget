@@ -1,6 +1,6 @@
 # UPower Battery Widget
 
-This is my re-implementation of the [awesome-upower-battery][awesome-upower-battery-repository] by [berlam][berlam]. This widget has a lot of potencial for the [Awesome WM][AwesomeWM] and I wanted to hack it a bit for my personal use.
+This is my re-implementation of the [awesome-upower-battery][awesome-upower-battery-repository] by [berlam][berlam]. This widget has a lot of potential for the [Awesome WM][AwesomeWM] and I wanted to hack it a bit for my personal use.
 
 UPower is an abstraction for power devices. You can use it to access advanced statistics about your power devices.
 UPowerGlib is a Glib interface to access data exposed by UPower.
