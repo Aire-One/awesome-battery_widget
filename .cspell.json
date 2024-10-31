@@ -15,6 +15,7 @@
     "luacheckrc",
     "luadoc",
     "luarocks",
+    "lunarmodules",
     "mktemp",
     "mousegrabber",
     "rockspec",

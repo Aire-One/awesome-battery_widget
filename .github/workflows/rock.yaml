@@ -1,21 +1,21 @@
 name: Upload rock to LuaRocks
 
 on:
-   push:
+  push:
 
 jobs:
-   affected:
-      uses: lunarmodules/.github/.github/workflows/list_affected_rockspecs.yml@main
-   upload:
-      needs: affected
-      if: >-
-         ${{
-           github.repository == 'Aire-One/awesome-slot' &&
-           ( github.ref_name == 'master' || startsWith(github.ref, 'refs/tags/') ) &&
-           needs.affected.outputs.rockspecs
-         }}
-      uses: lunarmodules/.github/.github/workflows/upload_to_luarocks.yml@main
-      with:
-         rockspecs: ${{ needs.affected.outputs.rockspecs }}
-      secrets:
-         apikey: ${{ secrets.LUAROCKS_APIKEY }}
+  affected:
+    uses: lunarmodules/.github/.github/workflows/list_affected_rockspecs.yml@main
+  upload:
+    needs: affected
+    if: >-
+      ${{
+        github.repository == 'Aire-One/awesome-battery_widget' &&
+        ( github.ref_name == 'master' || startsWith(github.ref, 'refs/tags/') ) &&
+        needs.affected.outputs.rockspecs
+      }}
+    uses: lunarmodules/.github/.github/workflows/upload_to_luarocks.yml@main
+    with:
+      rockspecs: ${{ needs.affected.outputs.rockspecs }}
+    secrets:
+      apikey: ${{ secrets.LUAROCKS_APIKEY }}

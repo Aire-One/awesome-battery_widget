@@ -1,34 +1,33 @@
 ---------------------------------------------------------------------------
--- A battery widget based on the UPower deamon.
+-- A battery widget based on the UPower daemon.
 --
 -- @author Aire-One
 -- @copyright 2020 Aire-One
 ---------------------------------------------------------------------------
 
-local upower = require('lgi').require('UPowerGlib')
+local upower = require("lgi").require "UPowerGlib"
 
-local gtable = require 'gears.table'
-local gtimer = require 'gears.timer'
-local wbase = require 'wibox.widget.base'
+local gtable = require "gears.table"
+local gtimer = require "gears.timer" -- cspell: ignore gtimer
+local wbase = require "wibox.widget.base" -- cspell: ignore wbase
 
 local setmetatable = setmetatable -- luacheck: ignore setmetatable
 
 local battery_widget = {}
 local mt = {}
 
-
 --- Helper to get the path of all connected power devices.
 -- @treturn table The list of all power devices path.
 -- @staticfct battery_widget.list_devices
 function battery_widget.list_devices()
-    local ret = {}
-    local devices = upower.Client():get_devices()
+   local ret = {}
+   local devices = upower.Client():get_devices()
 
-    for _,d in ipairs(devices) do
-        table.insert(ret, d:get_object_path())
-    end
+   for _, d in ipairs(devices) do
+      table.insert(ret, d:get_object_path())
+   end
 
-    return ret
+   return ret
 end
 
 --- Helper function to get a device instance from its path.
@@ -36,23 +35,23 @@ end
 -- @treturn UPowerGlib.Device|nil The device if it was found, `nil` otherwise.
 -- @staticfct battery_widget.get_device
 function battery_widget.get_device(path)
-    local devices = upower.Client():get_devices()
+   local devices = upower.Client():get_devices()
 
-    for _,d in ipairs(devices) do
-        if d:get_object_path() == path then
-            return d
-        end
-    end
+   for _, d in ipairs(devices) do
+      if d:get_object_path() == path then
+         return d
+      end
+   end
 
-    return nil
+   return nil
 end
 
 --- Helper function to easily get the default BAT0 device path without.
 -- @treturn string The BAT0 device path.
 -- @staticfct battery_widget.get_BAT0_device_path
 function battery_widget.get_BAT0_device_path()
-    local bat0_path = '/org/freedesktop/UPower/devices/battery_BAT0'
-    return bat0_path
+   local bat0_path = "/org/freedesktop/UPower/devices/battery_BAT0"
+   return bat0_path
 end
 
 --- Helper function to convert seconds into a human readable clock string.
@@ -64,33 +63,30 @@ end
 -- @treturn string The human readable generated clock string.
 -- @staticfct battery_widget.to_clock
 function battery_widget.to_clock(seconds)
-    if seconds <= 0 then
-        return '00:00';
-    else
-        local hours = string.format('%02.f', math.floor(seconds/3600));
-        local mins = string.format('%02.f', math.floor(seconds/60 - hours*60));
-        return hours .. ':' .. mins
-    end
+   if seconds <= 0 then
+      return "00:00"
+   else
+      local hours = string.format("%02.f", math.floor(seconds / 3600))
+      local mins = string.format("%02.f", math.floor(seconds / 60 - hours * 60))
+      return hours .. ":" .. mins
+   end
 end
-
 
 --- Gives the default widget to use if user didn't specify one.
 -- The default widget used is an `empty_widget` instance.
 -- @treturn widget The default widget to use.
-local function default_template ()
-    return wbase.empty_widget()
+local function default_template()
+   return wbase.empty_widget()
 end
-
 
 --- The device monitored by the widget.
 -- @property device
 -- @tparam UPowerGlib.Device device
 
---- Emited when the UPower device notify an update.
+--- Emitted when the UPower device notify an update.
 -- @signal upower::update
 -- @tparam battery_widget widget The widget.
 -- @tparam UPowerGlib.Device device The Upower device.
-
 
 --- battery_widget constructor.
 --
@@ -106,35 +102,33 @@ end
 --   widget creation.
 -- @treturn battery_widget The battery_widget instance build.
 -- @constructorfct battery_widget.new
-function battery_widget.new (args)
-    args = gtable.crush({
-        widget_template = default_template(),
-        device_path = '',
-        use_display_device = false
-    }, args or {})
+function battery_widget.new(args)
+   args = gtable.crush({
+      widget_template = default_template(),
+      device_path = "",
+      use_display_device = false,
+   }, args or {})
 
-    local widget = wbase.make_widget_from_value(args.widget_template)
+   local widget = wbase.make_widget_from_value(args.widget_template)
 
-    widget.device = args.use_display_device
-        and upower.Client():get_display_device()
-        or battery_widget.get_device(args.device_path)
+   widget.device = args.use_display_device and upower.Client():get_display_device()
+      or battery_widget.get_device(args.device_path)
 
-    -- Attach signals:
-    widget.device.on_notify = function (d)
-        widget:emit_signal('upower::update', d)
-    end
+   -- Attach signals:
+   widget.device.on_notify = function(d)
+      widget:emit_signal("upower::update", d)
+   end
 
-    -- Call an update cycle if the user asked to instan update the widget.
-    if args.instant_update then
-        gtimer.delayed_call(widget.emit_signal, widget, 'upower::update', widget.device)
-    end
+   -- Call an update cycle if the user asked to instant update the widget.
+   if args.instant_update then
+      gtimer.delayed_call(widget.emit_signal, widget, "upower::update", widget.device)
+   end
 
-    return widget
+   return widget
 end
 
-
-function mt.__call(self, ...)
-    return battery_widget.new(...)
+function mt.__call(_, ...)
+   return battery_widget.new(...)
 end
 
 return setmetatable(battery_widget, mt)

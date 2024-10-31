@@ -46,6 +46,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: leafo/gh-actions-lua@v9
-      - uses: leafo/gh-actions-luarocks@v4
-      - run: luarocks lint awesome-slot-dev-1.rockspec
+      - uses: luarocks/gh-actions-lua@v10
+      - uses: luarocks/gh-actions-luarocks@v5
+      - run: luarocks lint awesome-battery_widget-dev-1.rockspec
