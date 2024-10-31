@@ -1,6 +1,12 @@
 {
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
+  "version": "0.2",
+  "useGitignore": true,
+  "ignorePaths": [".git"],
+  "enableGlobDot": true,
   "words": [
     "Aire-One",
+    "apikey",
     "berlam",
     "constructorfct",
     "dbus",
@@ -19,6 +25,7 @@
     "mktemp",
     "mousegrabber",
     "rockspec",
+    "rockspecs",
     "staticfct",
     "stylua",
     "upower",
