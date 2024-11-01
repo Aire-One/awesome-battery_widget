@@ -8,7 +8,7 @@ source = {
 description = {
    summary = "A UPowerGlib based battery widget for the Awesome WM with a basic widget template mechanism! 🔋",
    homepage = "https://github.com/Aire-One/awesome-battery_widget",
-   license = "*** please specify a license ***",
+   license = "MIT",
 }
 
 dependencies = {
