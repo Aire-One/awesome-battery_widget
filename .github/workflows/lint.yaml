@@ -11,15 +11,15 @@ jobs:
     needs: []
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: lunarmodules/luacheck@v1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: lunarmodules/luacheck@cc089e3f65acdd1ef8716cc73a3eca24a6b845e4 # v1.2.0
 
   stylua:
     needs: []
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: JohnnyMorganz/stylua-action@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: JohnnyMorganz/stylua-action@76fd70c03e6340ceaf673366712db9b20560b402 # v5.0.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: v0.20.0
@@ -29,23 +29,23 @@ jobs:
     needs: []
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: lunarmodules/ldoc@v1.5.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: lunarmodules/ldoc@09f82c959c50d8c3d5a968c379b1c75de66b002d # v1.5.0
         with:
           args: --fatalwarnings .
 
   spellcheck:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: streetsidesoftware/cspell-action@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: streetsidesoftware/cspell-action@de2a73e963e7443969755b648a1008f77033c5b2 # v8.4.0
         with:
           incremental_files_only: false
 
   rockspec:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: luarocks/gh-actions-lua@v10
-      - uses: luarocks/gh-actions-luarocks@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: luarocks/gh-actions-lua@fc6f8de246f8c01f6e1a56a1b851143e23370ff3 # v12
+      - uses: luarocks/gh-actions-luarocks@95d2308a0aff36ad31ebadca493ed14853399842 # v7
       - run: luarocks lint awesome-battery_widget-dev-1.rockspec
