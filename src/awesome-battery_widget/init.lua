@@ -5,16 +5,33 @@
 -- @copyright 2020 Aire-One
 ---------------------------------------------------------------------------
 
-local upower = require("lgi").require "UPowerGlib"
-
+local gdebug = require "gears.debug" -- cspell: ignore gdebug
 local gtable = require "gears.table"
 local gtimer = require "gears.timer" -- cspell: ignore gtimer
+local lgi = require "lgi"
 local wbase = require "wibox.widget.base" -- cspell: ignore wbase
+
+local has_upower, upower = pcall(lgi.require, "UPowerGlib")
+
+local function print_warning(msg)
+   gdebug.print_warning("[Aire-One's awesome-battery_widget] " .. msg)
+end
+
+if not has_upower then
+   print_warning "UPowerGlib not found. The battery_widget will not work."
+end
 
 local setmetatable = setmetatable -- luacheck: ignore setmetatable
 
 local battery_widget = {}
 local mt = {}
+
+--- Check if the UPowerGlib module is available.
+-- @treturn boolean `true` if the UPowerGlib module is available, `false` otherwise.
+-- @staticfct battery_widget.has_upower
+function battery_widget.has_upower()
+   return has_upower
+end
 
 --- Helper to get the path of all connected power devices.
 -- @treturn table The list of all power devices path.
